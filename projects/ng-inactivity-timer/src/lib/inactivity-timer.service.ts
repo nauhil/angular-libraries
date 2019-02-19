@@ -45,7 +45,7 @@ export class InactivityTimerService {
           startWith(undefined), // Trigger observable immediately
           map(() => {
             const d = new Date();
-            d.setSeconds(d.getSeconds() + config.inactivityTime);
+            d.setMinutes(d.getMinutes() + config.inactivityTime);
             return d;
           }),
           takeUntil(this.monitor$.pipe(filter(x => !x)))
@@ -61,12 +61,12 @@ export class InactivityTimerService {
   public getTimeOut(): Observable<Timeout> {
     return this.timeout$.pipe(
       switchMap((date: Date) => {
-        return timer(0, 1000).pipe(
+        return timer(0, 60000).pipe(
           switchMap(() => {
             const f = new Date();
             return of({
               showWarning: this.config.warningTime
-                ? f.getTime() + this.config.warningTime * 1000 > date.getTime()
+                ? f.getTime() + this.config.warningTime > date.getTime()
                 : false,
               timedOut: f.getTime() > date.getTime(),
               timeLeft: date.getTime() - f.getTime()
